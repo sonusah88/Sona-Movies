@@ -1,0 +1,327 @@
+/* Library CSS - Premium cinematic dark theme adapted for books */
+
+.library-container {
+  padding: 80px 4% 40px;
+  min-height: 100vh;
+  background-color: var(--background, #0f0f0f);
+  color: var(--text-primary, #ffffff);
+}
+
+/* Hero Section */
+.library-hero {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(29, 29, 39, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%), 
+              url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+  padding: 80px 40px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.library-hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg, #fff, #a1a1aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.library-hero p {
+  font-size: 1.2rem;
+  color: #a1a1aa;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+.library-search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  padding: 5px 5px 5px 20px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.library-search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.library-search-bar button {
+  background: #e50914; /* Netflix red / Primary accent */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.library-search-bar button:hover {
+  background: #f40612;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.hero-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: white;
+  color: black;
+}
+.btn-primary:hover {
+  background: #e5e5e5;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  backdrop-filter: blur(5px);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Sections */
+.library-section {
+  margin-bottom: 50px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.library-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.view-all {
+  background: transparent;
+  color: #a1a1aa;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+.view-all:hover {
+  color: white;
+}
+
+/* Horizontal Book List */
+.horizontal-book-list {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+.horizontal-book-list::-webkit-scrollbar {
+  height: 6px;
+}
+.horizontal-book-list::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
+
+/* Book Card */
+.book-card {
+  min-width: 160px;
+  max-width: 160px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+.book-cover-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.book-card:hover .book-cover {
+  transform: scale(1.05);
+}
+
+.access-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  backdrop-filter: blur(5px);
+}
+.badge-success { background: rgba(34, 197, 94, 0.9); color: white; }
+.badge-primary { background: rgba(59, 130, 246, 0.9); color: white; }
+.badge-warning { background: rgba(234, 179, 8, 0.9); color: black; }
+.badge-secondary { background: rgba(161, 161, 170, 0.9); color: white; }
+
+.book-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-author {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+.book-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Category Grid */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+.category-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.category-card:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-3px);
+}
+.category-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 10px;
+}
+.category-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Newspapers */
+.newspaper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+.newspaper-region h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #e5e5e5;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 10px;
+}
+.newspaper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.newspaper-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  padding: 10px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.2s;
+}
+.newspaper-card:hover {
+  background: rgba(255,255,255,0.1);
+}
+.newspaper-logo {
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 15px;
+  background-color: white; /* Often logos need white bg */
+  border-radius: 5px;
+  padding: 5px;
+}
+.newspaper-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  flex: 1;
+}
+.newspaper-lang {
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.1);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .library-hero {
+    padding: 60px 20px;
+  }
+  .library-hero h1 {
+    font-size: 2rem;
+  }
+}

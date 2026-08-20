@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "project": {
+    "name": "new-folder--2-",
+    "productType": null,
+    "stack": [
+      "react",
+      "vite"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "src/index.css",
+      "src/app.css"
+    ],
+    "components": [],
+    "assets": [
+      "src/assets"
+    ],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "--bg-primary": {
+        "value": "#040508",
+        "source": "src/index.css"
+      },
+      "--bg-secondary": {
+        "value": "#0a0c13",
+        "source": "src/index.css"
+      },
+      "--text-primary": {
+        "value": "#f8f9fa",
+        "source": "src/index.css"
+      },
+      "--text-secondary": {
+        "value": "#9ba1a6",
+        "source": "src/index.css"
+      },
+      "--accent": {
+        "value": "#00e5ff",
+        "source": "src/index.css"
+      },
+      "--accent-gradient": {
+        "value": "linear-gradient(135deg, #00e5ff, #0077ff)",
+        "source": "src/index.css"
+      },
+      "--accent-glow": {
+        "value": "rgba(0, 229, 255, 0.4)",
+        "source": "src/index.css"
+      },
+      "--ease-spring": {
+        "value": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        "source": "src/index.css"
+      }
+    },
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {
+      "--ease-smooth": {
+        "value": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "source": "src/index.css"
+      },
+      "--transition": {
+        "value": "all 0.3s var(--ease-smooth)",
+        "source": "src/index.css"
+      },
+      "--transition-slow": {
+        "value": "all 0.6s var(--ease-smooth)",
+        "source": "src/index.css"
+      }
+    },
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [],
+    "avoid": []
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "design.colorMode:light",
+      "source": "src/index.css, src/app.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "src/app.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:vite",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-08-12T10:11:28.306Z"
+}

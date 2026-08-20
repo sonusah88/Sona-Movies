@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Premium Cinematic Dark Mode */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: rgba(15, 15, 18, 0.6);
+  --bg-glass: rgba(10, 10, 12, 0.75);
+  
+  --text-primary: #fdfdfd;
+  --text-secondary: #a1a1aa;
+  
+  /* Primary Accent: Electric Indigo / Cyan for a modern feel */
+  --accent: #00e5ff;
+  --accent-gradient: linear-gradient(135deg, #00e5ff, #0077ff);
+  --accent-glow: rgba(0, 229, 255, 0.25);
+  
+  --gold: #f5c518;
+  --magenta: #ff0055;
+  --magenta-glow: rgba(255, 0, 85, 0.25);
+  
+  /* Buttery Smooth Easing */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+  --transition: all 0.3s var(--ease-smooth);
+  --transition-slow: all 0.6s var(--ease-smooth);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(1.8rem, 4.5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3.5vw, 2.5rem); }
+h3 { font-size: clamp(1.1rem, 2.5vw, 1.8rem); }
+h4 { font-size: clamp(1rem, 1.8vw, 1.35rem); }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.container {
+  max-width: 1800px;
+  margin: 0 auto;
+  /* Fluid padding: smaller padding on mobile, larger on desktop */
+  padding: 0 clamp(1rem, 4vw, 4rem);
+}
+
+/* Premium Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.8rem;
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: none;
+  outline: none;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  /* High-FPS Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, box-shadow, opacity;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+  background: var(--text-primary);
+  color: #000;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 12px 30px var(--accent-glow);
+  transform: translateY(-3px) scale(1.05) translateZ(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 12px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px) scale(1.05) translateZ(0);
+}
+
+/* Premium Glassmorphism Utility (3D Water Droplet Effect) */
+.glass {
+  background: rgba(15, 20, 25, 0.5);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.5), 
+    inset 0 0 15px rgba(255, 255, 255, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+.glass-droplet {
+  background: rgba(15, 20, 25, 0.65);
+  backdrop-filter: blur(35px) saturate(200%);
+  -webkit-backdrop-filter: blur(35px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 32px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5), 
+    inset 0 0 20px rgba(255, 255, 255, 0.05),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Tags */
+.category-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  margin-left: 1rem;
+  vertical-align: middle;
+}
+
+.tag-hollywood {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.tag-hindi {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+.tag-nepali {
+  background: rgba(72, 219, 251, 0.15);
+  color: #48dbfb;
+}
+.tag-bhojpuri {
+  background: rgba(254, 202, 87, 0.15);
+  color: #feca57;
+}
+.tag-youtube {
+  background: rgba(255, 0, 60, 0.15);
+  color: var(--magenta);
+}
+.tag-dubbed {
+  background: rgba(188, 19, 254, 0.15);
+  color: #bc13fe;
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite var(--ease-smooth);
+  transform: translateZ(0);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Global Entrance Animations */
+.fade-in {
+  animation: fadeIn 0.8s var(--ease-smooth) forwards;
+  will-change: opacity, transform;
+  transform: translateZ(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px) translateZ(0); }
+  to { opacity: 1; transform: translateY(0) translateZ(0); }
+}
+
+/* Page Loader (Suspense Fallback) */
+.page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-primary);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.loader-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  animation: spin 1s ease-in-out infinite;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Global Back Button */
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  padding: 0.8rem 1.5rem;
+  border-radius: 100px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 50;
+  position: relative;
+  width: fit-content;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-5px);
+}
+
+@media (max-width: 768px) {
+  .back-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+}
+
+/* --- Premium Scrollbars --- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  border: 2px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* --- Scroll Animation Classes --- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px) translateZ(0);
+  transition: opacity 0.8s var(--ease-spring), transform 0.8s var(--ease-spring);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+/* Home Content Wrapper for Responsive Hero Overlap */
+.home-content-wrapper {
+  margin-top: -6rem;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .home-content-wrapper {
+    margin-top: -1rem; /* Significantly reduce overlap on mobile to prevent clutter */
+  }
+}

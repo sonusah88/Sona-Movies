@@ -1,0 +1,9 @@
+.category-page {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding-bottom: 4rem;
+}
+
+.category-header {
+  height: 120px; /* Spacer to push content below the fixed navbar */
+}
