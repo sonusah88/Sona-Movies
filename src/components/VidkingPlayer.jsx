@@ -1,8 +1,9 @@
 // src/components/VidkingPlayer.jsx
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { Search, AlertTriangle, X, Flag } from "lucide-react";
+import { Search, AlertTriangle, X, Flag, Video, VideoOff } from "lucide-react";
 import latentData from "../data/latent.json";
+import { useWebRTC } from "../hooks/useWebRTC";
 import "./VidkingPlayer.css";
 
 // ---------------------------------------------------------------------------
@@ -241,9 +242,42 @@ const VidkingPlayer = ({
     );
   }
 
+  // ── WebRTC Virtual Cinema ────────────────────────────────────────────────────
+  const { localStream, remoteStreams, isJoined, joinCall, leaveCall } = useWebRTC("demo-room", "user-123", true);
+
   // ── Main player ────────────────────────────────────────────────────────────
   return (
     <div className="vidking-wrapper" ref={wrapperRef}>
+
+      {/* ── WebRTC Floating Container (10%) ── */}
+      {isJoined && (
+        <div className="webrtc-floating-container">
+          <div className="webrtc-grid">
+            {/* Local Video */}
+            <div className="webrtc-feed local-feed">
+              <video 
+                ref={el => { if (el) el.srcObject = localStream; }} 
+                autoPlay playsInline muted 
+                className="webrtc-video"
+              />
+            </div>
+            
+            {/* Remote Videos */}
+            {Object.entries(remoteStreams).map(([peerId, stream]) => (
+              <div key={peerId} className="webrtc-feed remote-feed">
+                <video 
+                  ref={el => { if (el) el.srcObject = stream; }} 
+                  autoPlay playsInline 
+                  className="webrtc-video remote-video"
+                />
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-danger webrtc-leave-btn" onClick={leaveCall}>
+            <X size={12} /> Leave Call
+          </button>
+        </div>
+      )}
 
       {/* Server selector bar */}
       <div className="server-bar glass">

@@ -285,3 +285,64 @@
   background: rgba(20, 25, 30, 1) !important;
   box-shadow: none !important;
 }
+
+/* -- WebRTC Virtual Cinema -- */
+.webrtc-floating-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 10vw;
+  min-width: 120px;
+  background: rgba(10, 10, 15, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.webrtc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.webrtc-feed {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #000;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.webrtc-grid:has(> :nth-child(2)) .webrtc-feed {
+  width: calc(50% - 0.25rem);
+}
+
+.webrtc-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror local video */
+}
+
+.remote-video {
+  transform: none; /* Remote video should not be mirrored */
+}
+
+.webrtc-leave-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 0.7rem;
+  padding: 0.3rem;
+  border-radius: 6px;
+}
+
