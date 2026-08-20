@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MediaGrid from '../components/MediaGrid';
-import { searchMedia, fetchAnime, fetchKDrama, fetchPakistaniDrama, fetchAdultRomance } from '../lib/tmdb';
+import { searchMedia, fetchAnime, fetchKDrama, fetchPakistaniDrama, fetchAdultRomance, fetchHollywoodMovies, fetchHindiMovies, fetchBhojpuriMovies } from '../lib/tmdb';
 
 const SPECIFIC_SERIES = [
   "Motu Patlu",
@@ -25,35 +25,53 @@ const SPECIFIC_SERIES = [
 const Discover = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [industryFilter, setIndustryFilter] = useState('all'); // 'all', 'hollywood', 'indian'
 
   useEffect(() => {
     let cancelled = false;
 
     const loadCollections = async () => {
+      setLoading(true);
       try {
-        // Fetch dynamic categories
-        const anime = await fetchAnime();
-        const kDrama = await fetchKDrama();
-        const adultRomance = await fetchAdultRomance();
-        const pakDrama = await fetchPakistaniDrama();
+        let dynamicCollections = [];
+        let specificResults = [];
 
-        const dynamicCollections = [
-          { name: "Top Anime Series", items: anime },
-          { name: "K-Dramas", items: kDrama },
-          { name: "Hot & Romance (18+)", items: adultRomance },
-          { name: "Pakistani Dramas", items: pakDrama }
-        ];
+        if (industryFilter === 'all') {
+          const anime = await fetchAnime();
+          const kDrama = await fetchKDrama();
+          const adultRomance = await fetchAdultRomance();
+          const pakDrama = await fetchPakistaniDrama();
+          
+          dynamicCollections = [
+            { name: "Top Anime Series", items: anime },
+            { name: "K-Dramas", items: kDrama },
+            { name: "Hot & Romance (18+)", items: adultRomance },
+            { name: "Pakistani Dramas", items: pakDrama }
+          ];
 
-        // Fetch specific searches
-        const specificResults = await Promise.all(
-          SPECIFIC_SERIES.map(async (series) => {
-            const data = await searchMedia(series);
-            return {
-              name: series,
-              items: data.filter(i => i.poster_path) // only show items with posters
-            };
-          })
-        );
+          specificResults = await Promise.all(
+            SPECIFIC_SERIES.map(async (series) => {
+              const data = await searchMedia(series);
+              return { name: series, items: data.filter(i => i.poster_path) };
+            })
+          );
+        } else if (industryFilter === 'hollywood') {
+          const hw1 = await fetchHollywoodMovies(1);
+          const hw2 = await fetchHollywoodMovies(2);
+          const hw3 = await fetchHollywoodMovies(3);
+          dynamicCollections = [
+            { name: "Top Hollywood Hits", items: hw1 },
+            { name: "Hollywood Blockbusters", items: hw2 },
+            { name: "Critically Acclaimed (Hollywood)", items: hw3 }
+          ];
+        } else if (industryFilter === 'indian') {
+          const hindi = await fetchHindiMovies();
+          const bhojpuri = await fetchBhojpuriMovies();
+          dynamicCollections = [
+            { name: "Top Bollywood Movies", items: hindi },
+            { name: "Bhojpuri Hits", items: bhojpuri }
+          ];
+        }
         
         if (!cancelled) {
           setCollections([...dynamicCollections, ...specificResults]);
@@ -67,7 +85,7 @@ const Discover = () => {
 
     loadCollections();
     return () => { cancelled = true; };
-  }, []);
+  }, [industryFilter]);
 
   if (loading) {
     return (
@@ -112,9 +130,24 @@ const Discover = () => {
               Discover
             </h1>
           </div>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.2rem', maxWidth: '600px', lineHeight: '1.6', margin: 0 }}>
-            Explore a world of endless entertainment. From the best Anime and K-Dramas to your favorite Cartoon and Epic series.
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.2rem', maxWidth: '600px', lineHeight: '1.6', margin: 0, marginBottom: '2rem' }}>
+            Explore a world of endless entertainment. Tailor your feed to your favorite industry.
           </p>
+
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button 
+              className={`btn ${industryFilter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setIndustryFilter('all')}
+            >Global All</button>
+            <button 
+              className={`btn ${industryFilter === 'hollywood' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setIndustryFilter('hollywood')}
+            >Top Hollywood Releases</button>
+            <button 
+              className={`btn ${industryFilter === 'indian' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setIndustryFilter('indian')}
+            >Top Indian Movies</button>
+          </div>
         </div>
       </div>
 

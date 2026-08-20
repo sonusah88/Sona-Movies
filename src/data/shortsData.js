@@ -10,6 +10,7 @@ export const SHORTS_CATEGORIES = [
   { id: 'facts', name: '🧠 Facts & Knowledge' },
   { id: 'drama', name: '🎭 Drama' },
   { id: 'emotional', name: '💔 Emotional Stories' },
+  { id: 'culinary', name: '🍲 Culinary & Recipes' },
 ];
 
 export const MOCK_SHORTS = [
@@ -144,6 +145,17 @@ export const MOCK_SHORTS = [
     category: 'kdrama-hindi', language: 'Hindi Dubbed',
     stats: { likes: '88K', comments: '900', shares: '3.4K', saves: '15K' },
     music: 'Electronic Chill', tags: ['#snowboard', '#powder', '#mountain'],
+  },
+  {
+    id: 's13',
+    videoUrl: 'https://res.cloudinary.com/demo/video/upload/w_400,h_700,c_fill/cooking.mp4',
+    thumbnail: 'https://res.cloudinary.com/demo/video/upload/w_400,h_700,c_fill/cooking.jpg',
+    title: 'Traditional Goat Feet Curry (Paya) 🍲',
+    description: 'Slow-cooked traditional goat feet curry rich in flavor and spices. Perfect for winter! #cooking #recipes #paya',
+    creator: { id: 'c13', name: 'Desi Kitchen', avatar: 'https://i.pravatar.cc/150?u=kitchen', isFollowed: false },
+    category: 'culinary', language: 'Hindi',
+    stats: { likes: '55K', comments: '1.2K', shares: '4K', saves: '12K' },
+    music: 'Traditional Cooking Beats', tags: ['#recipe', '#cooking', '#curry'],
   }
 ];
 

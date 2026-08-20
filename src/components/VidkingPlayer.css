@@ -266,3 +266,22 @@
     flex-direction: column;
   }
 }
+
+/* Hardware Mode Overrides (Performance) */
+.vidking-wrapper.hardware-mode {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+  background: rgba(10, 10, 15, 0.98) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.vidking-wrapper.hardware-mode .server-bar,
+.vidking-wrapper.hardware-mode .player-help,
+.vidking-wrapper.hardware-mode .vpn-banner {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(20, 25, 30, 1) !important;
+  box-shadow: none !important;
+}

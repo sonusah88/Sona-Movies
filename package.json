@@ -10,13 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-virtual": "^3.14.10",
     "hls.js": "^1.6.17",
     "lucide-react": "^1.30.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-error-boundary": "^6.1.2",
     "react-player": "^3.4.0",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@21st-dev/cli": "^1.15.1",

@@ -91,7 +91,7 @@ export default async function handler(req, res) {
 
     // Set Edge Cache: Cache on Vercel CDN for 1 hour (3600 seconds)
     // and instruct browser to cache for 30 minutes (1800 seconds)
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800');
 
     res.status(200).json({ success: true, channels: uniqueChannels });
   } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, ArrowLeft, Star, Clock, Calendar, Layers, Heart } from 'lucide-react';
+import { Play, ArrowLeft, Star, Clock, Calendar, Layers, Heart, ShieldCheck, X } from 'lucide-react';
 import { fetchDetails, fetchSeasonDetails, fetchTrailer } from '../lib/tmdb';
 import { useUser } from '../context/UserContext';
 import MediaGrid from '../components/MediaGrid';
@@ -15,6 +15,11 @@ const Details = () => {
   const [loading, setLoading] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
   const [trailerKey, setTrailerKey] = useState(null);
+
+  // C2PA State
+  const [showC2paModal, setShowC2paModal] = useState(false);
+  const [c2paData, setC2paData] = useState(null);
+  const [loadingC2pa, setLoadingC2pa] = useState(false);
 
   // TV Show specific state
   const [season, setSeason] = useState(1);
@@ -139,6 +144,29 @@ const Details = () => {
     toggleFavorite({ ...details, media_type: type });
   };
 
+  const handleVerifyC2pa = async () => {
+    setShowC2paModal(true);
+    setLoadingC2pa(true);
+    try {
+      const res = await fetch('/api/c2pa-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mediaId: details.id })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setC2paData(data);
+      } else {
+        setC2paData(null);
+      }
+    } catch (err) {
+      console.error(err);
+      setC2paData(null);
+    } finally {
+      setLoadingC2pa(false);
+    }
+  };
+
   return (
     <div className="details-page fade-in">
       <div 
@@ -163,7 +191,21 @@ const Details = () => {
           </div>
           
           <div className="details-info">
-            <h1 className="details-title">{details.title}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+              <h1 className="details-title" style={{ margin: 0 }}>{details.title}</h1>
+              <button 
+                onClick={handleVerifyC2pa}
+                style={{
+                  background: 'rgba(0, 229, 255, 0.1)', border: '1px solid var(--accent)',
+                  color: 'var(--accent)', padding: '0.4rem 0.8rem', borderRadius: '12px',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer',
+                  fontWeight: 'bold', fontSize: '0.85rem', backdropFilter: 'blur(10px)'
+                }}
+                title="Verify Content Authenticity"
+              >
+                <ShieldCheck size={16} /> Content Credentials
+              </button>
+            </div>
             
             <div className="details-meta">
               <span className="meta-item"><Star size={16} fill="#f5c518" color="#f5c518" /> {details.vote_average?.toFixed(1)}</span>
@@ -309,6 +351,58 @@ const Details = () => {
                   title="Trailer"
                 ></iframe>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* C2PA Modal */}
+        {showC2paModal && (
+          <div className="trailer-modal-overlay" onClick={() => setShowC2paModal(false)} style={{ zIndex: 200, alignItems: 'center' }}>
+            <div className="trailer-modal-content fade-in" onClick={e => e.stopPropagation()} style={{ 
+              background: 'var(--bg-glass)', border: '1px solid rgba(255,255,255,0.1)', 
+              maxWidth: '500px', padding: '2.5rem', borderRadius: '24px', 
+              boxShadow: '0 0 40px rgba(0, 229, 255, 0.15)', height: 'auto', position: 'relative' 
+            }}>
+              <button 
+                onClick={() => setShowC2paModal(false)}
+                style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
+              >
+                <X size={24} />
+              </button>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem', color: 'var(--accent)' }}>
+                <ShieldCheck size={28} /> Content Authenticity
+              </h2>
+              {loadingC2pa ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                  <ShieldCheck size={48} className="spin-slow" style={{ opacity: 0.5, marginBottom: '1rem' }} />
+                  <p>Verifying cryptographic signatures...</p>
+                </div>
+              ) : c2paData ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                  <div style={{ background: 'rgba(0, 229, 255, 0.1)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                      <ShieldCheck size={16} color="var(--accent)" /> Verified by {c2paData.manifest.issuer}
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.85rem' }}>This media has verifiable provenance attached to it.</p>
+                  </div>
+                  <div><strong>Signer:</strong> <span style={{ color: '#fff' }}>{c2paData.manifest.signer}</span></div>
+                  <div><strong>Timestamp:</strong> <span style={{ color: '#fff' }}>{new Date(c2paData.manifest.timestamp).toLocaleString()}</span></div>
+                  <div>
+                    <strong style={{ display: 'block', marginBottom: '0.5rem' }}>Processing History:</strong>
+                    <ul style={{ color: '#fff', margin: 0, paddingLeft: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem 1rem 1rem 2.5rem', borderRadius: '12px' }}>
+                      {c2paData.manifest.ingredients.map((ing, i) => (
+                        <li key={i} style={{ marginBottom: '0.4rem' }}>{ing.action} <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>({ing.type})</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div><strong>Copyright:</strong> <span style={{ color: '#fff' }}>{c2paData.manifest.copyright}</span></div>
+                  <div><strong>Hash:</strong> <span style={{ color: '#fff', fontFamily: 'monospace', fontSize: '0.8rem', wordBreak: 'break-all' }}>{c2paData.manifest.hash}</span></div>
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '2rem', color: '#ff0055' }}>
+                  <p>Verification failed. Could not retrieve provenance data.</p>
+                </div>
+              )}
             </div>
           </div>
         )}

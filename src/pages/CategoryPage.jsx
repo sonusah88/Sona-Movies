@@ -1,95 +1,104 @@
-import React, { useEffect, useState } from 'react';
-import MediaGrid from '../components/MediaGrid';
-import { fetchTrending, fetchPopularTV, fetchByGenre, fetchNewAndUpcoming } from '../lib/tmdb';
-import { useParams } from 'react-router-dom';
-import './CategoryPage.css';
+﻿import React, { useEffect, useState, useTransition, useCallback } from "react";
+import MediaGrid from "../components/MediaGrid";
+import { fetchTrending, fetchPopularTV, fetchByGenre, fetchNewAndUpcoming } from "../lib/tmdb";
+import { useParams } from "react-router-dom";
+import "./CategoryPage.css";
 
 const CategoryPage = ({ type }) => {
   const { id: genreId, name: genreName } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  // useTransition: the heavy setData() update is marked non-urgent.
+  // React keeps the skeleton & any existing UI interactive while the new
+  // catalog renders in the background — zero UI freeze on category switch.
+  const [isPending, startTransition] = useTransition();
+
+  const loadData = useCallback(async () => {
     let cancelled = false;
     setLoading(true);
 
-    const loadData = async () => {
-      try {
-        let results = [];
-        
-        if (type === 'movies') {
-          // Fetch multiple pages of movies to make a large grid
-          const page1 = await fetchTrending(1);
-          const page2 = await fetchTrending(2);
-          const page3 = await fetchTrending(3);
-          results = [...page1, ...page2, ...page3].filter(item => item.media_type === 'movie' || !item.media_type).map(i => ({...i, media_type: 'movie'}));
-        } 
-        else if (type === 'tv') {
-          const page1 = await fetchPopularTV(1);
-          const page2 = await fetchPopularTV(2);
-          const page3 = await fetchPopularTV(3);
-          results = [...page1, ...page2, ...page3].map(i => ({...i, media_type: 'tv'}));
-        }
-        else if (type === 'new-releases') {
-          const page1 = await fetchNewAndUpcoming(1);
-          const page2 = await fetchNewAndUpcoming(2);
-          const page3 = await fetchNewAndUpcoming(3);
-          results = [...page1, ...page2, ...page3];
-        }
-        else if (type === 'genre') {
-          const page1 = await fetchByGenre(genreId, 1);
-          const page2 = await fetchByGenre(genreId, 2);
-          const page3 = await fetchByGenre(genreId, 3);
-          results = [...page1, ...page2, ...page3];
-        }
+    try {
+      let results = [];
 
-        if (!cancelled) {
-          // Remove duplicates
-          const uniqueResults = Array.from(new Set(results.map(a => a.id))).map(id => {
-            return results.find(a => a.id === id)
-          });
-          setData(uniqueResults);
-        }
-      } catch (error) {
-        console.error('Failed to load category data:', error);
-      } finally {
-        if (!cancelled) setLoading(false);
+      if (type === "movies") {
+        const [p1, p2, p3] = await Promise.all([
+          fetchTrending(1), fetchTrending(2), fetchTrending(3),
+        ]);
+        results = [...p1, ...p2, ...p3]
+          .filter((item) => item.media_type === "movie" || !item.media_type)
+          .map((i) => ({ ...i, media_type: "movie" }));
+      } else if (type === "tv") {
+        const [p1, p2, p3] = await Promise.all([
+          fetchPopularTV(1), fetchPopularTV(2), fetchPopularTV(3),
+        ]);
+        results = [...p1, ...p2, ...p3].map((i) => ({ ...i, media_type: "tv" }));
+      } else if (type === "new-releases") {
+        const [p1, p2, p3] = await Promise.all([
+          fetchNewAndUpcoming(1), fetchNewAndUpcoming(2), fetchNewAndUpcoming(3),
+        ]);
+        results = [...p1, ...p2, ...p3];
+      } else if (type === "genre") {
+        const [p1, p2, p3] = await Promise.all([
+          fetchByGenre(genreId, 1), fetchByGenre(genreId, 2), fetchByGenre(genreId, 3),
+        ]);
+        results = [...p1, ...p2, ...p3];
       }
-    };
 
-    loadData();
+      if (!cancelled) {
+        // De-duplicate by id
+        const unique = Array.from(
+          new Map(results.map((item) => [item.id, item])).values()
+        );
+
+        // Wrap in startTransition — React can yield to user input during this render
+        startTransition(() => {
+          setData(unique);
+          setLoading(false);
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load category data:", error);
+      if (!cancelled) setLoading(false);
+    }
+
     return () => { cancelled = true; };
   }, [type, genreId]);
 
+  useEffect(() => {
+    const cleanup = loadData();
+    return () => cleanup?.then?.((fn) => fn?.());
+  }, [loadData]);
+
   const getTitle = () => {
     switch (type) {
-      case 'movies': return '🎬 Discover Movies';
-      case 'tv': return '📺 Popular TV Shows';
-      case 'hindi-dubbed': return '🎙️ South Indian (Hindi Dubbed)';
-      case 'new-releases': return '🔥 New & Upcoming Releases';
-      case 'genre': return `🍿 ${decodeURIComponent(genreName || 'Movies')}`;
-      default: return 'Explore';
+      case "movies":       return "🎬 Discover Movies";
+      case "tv":           return "📺 Popular TV Shows";
+      case "hindi-dubbed": return "🎙️ South Indian (Hindi Dubbed)";
+      case "new-releases": return "🔥 New & Upcoming Releases";
+      case "genre":        return `🍿 ${decodeURIComponent(genreName || "Movies")}`;
+      default:             return "Explore";
     }
   };
 
   const getTag = () => {
     switch (type) {
-      case 'movies': return 'movies';
-      case 'tv': return 'tv';
-      case 'hindi-dubbed': return 'dubbed';
-      case 'new-releases': return 'new';
-      default: return '';
+      case "movies":       return "movies";
+      case "tv":           return "tv";
+      case "hindi-dubbed": return "dubbed";
+      case "new-releases": return "new";
+      default:             return "";
     }
   };
 
   if (loading) {
     return (
-      <div className="category-page" style={{ paddingTop: '100px' }}>
+      <div className="category-page" style={{ paddingTop: "100px" }}>
         <div className="container">
-          <div className="skeleton" style={{ width: 300, height: 40, marginBottom: '2rem' }}></div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '2rem' }}>
+          <div className="skeleton" style={{ width: 300, height: 40, marginBottom: "2rem" }} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "2rem" }}>
             {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="skeleton" style={{ aspectRatio: '2/3', borderRadius: 12 }}></div>
+              <div key={i} className="skeleton" style={{ aspectRatio: "2/3", borderRadius: 12 }} />
             ))}
           </div>
         </div>
@@ -98,10 +107,9 @@ const CategoryPage = ({ type }) => {
   }
 
   return (
-    <div className="category-page fade-in">
-      <div className="category-header">
-        {/* Adds spacing below the navbar */}
-      </div>
+    // Subtle opacity drop while isPending signals a background category switch in progress
+    <div className="category-page fade-in" style={{ opacity: isPending ? 0.7 : 1, transition: "opacity 0.2s" }}>
+      <div className="category-header" />
       <MediaGrid title={getTitle()} items={data} tag={getTag()} />
     </div>
   );

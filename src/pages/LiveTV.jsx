@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Hls from 'hls.js';
-import { Search, AlertTriangle, Tv } from 'lucide-react';
+import { Search, AlertTriangle, Tv, MessageCircle, List, Send, DollarSign, Users } from 'lucide-react';
 import './LiveTV.css';
 
 const LiveTV = () => {
@@ -9,6 +9,45 @@ const LiveTV = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [proxyMode, setProxyMode] = useState(false);
+  const [activeTab, setActiveTab] = useState('channels'); // 'channels' or 'chat'
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, user: 'System', text: 'Welcome to the live chat!', isSystem: true }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const chatEndRef = useRef(null);
+
+  // Mock SSE connection
+  useEffect(() => {
+    if (activeTab === 'chat') {
+      const interval = setInterval(() => {
+        const dummyMsgs = ['Hello!', 'Great stream!', 'What is this channel?', 'Laggy for anyone else?', '🔥🔥🔥'];
+        setChatMessages(prev => [...prev, {
+          id: Date.now(),
+          user: `User${Math.floor(Math.random() * 1000)}`,
+          text: dummyMsgs[Math.floor(Math.random() * dummyMsgs.length)]
+        }].slice(-50));
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, activeTab]);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    setChatMessages(prev => [...prev, { id: Date.now(), user: 'You', text: chatInput }]);
+    setChatInput('');
+    // Real app would POST to /api/social-stream here
+  };
+
+  const handleTip = () => {
+    setChatMessages(prev => [...prev, { id: Date.now(), user: 'You', text: 'Sent a tip of $5! 💸', isSystem: true }]);
+  };
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -276,22 +315,38 @@ const LiveTV = () => {
           </div>
         </div>
 
-        {/* Channel Selector Sidebar */}
-        <div className="live-sidebar">
-          <div className="live-sidebar-header">
-            <div className="channel-search-box">
-              <Search size={18} className="search-icon" />
-              <input 
-                type="text" 
-                placeholder="Search channels..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="channel-search-input"
-              />
-            </div>
+        {/* Sidebar */}
+        <div className="live-sidebar glass">
+          <div className="sidebar-tabs">
+            <button 
+              className={`tab-btn ${activeTab === 'channels' ? 'active' : ''}`}
+              onClick={() => setActiveTab('channels')}
+            >
+              <Tv size={16} /> Channels
+            </button>
+            <button 
+              className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+              onClick={() => setActiveTab('chat')}
+            >
+              <MessageCircle size={16} /> Live Chat
+            </button>
           </div>
 
-          <div className="live-sidebar-content">
+          {activeTab === 'channels' ? (
+            <>
+              <div className="live-sidebar-header">
+                <div className="channel-search-box">
+                  <Search size={18} className="search-icon" />
+                  <input 
+                    type="text" 
+                    placeholder="Search channels..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="channel-search-input"
+                  />
+                </div>
+              </div>
+              <div className="live-sidebar-content">
             {indianChannels.length > 0 && (
               <>
                 <h3>Indian Channels <span className="channel-count">({indianChannels.length})</span></h3>
@@ -441,7 +496,46 @@ const LiveTV = () => {
                 <p>No channels found for "{searchQuery}"</p>
               </div>
             )}
-          </div>
+              </div>
+            </>
+          ) : (
+            <div className="live-chat-section">
+              <div className="chat-poll">
+                <h4><List size={14} /> Quick Poll: Rate this stream</h4>
+                <div className="poll-options">
+                  <button className="poll-btn">Awesome (78%)</button>
+                  <button className="poll-btn">Okay (15%)</button>
+                  <button className="poll-btn">Needs Work (7%)</button>
+                </div>
+              </div>
+              <div className="chat-messages live-sidebar-content">
+                {chatMessages.map(msg => (
+                  <div key={msg.id} className={`chat-message ${msg.isSystem ? 'system-msg' : ''}`}>
+                    {!msg.isSystem && <span className="chat-user">{msg.user}: </span>}
+                    <span className="chat-text">{msg.text}</span>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+              <div className="chat-input-area">
+                <button className="tip-btn" onClick={handleTip} title="Send Tip">
+                  <DollarSign size={18} />
+                </button>
+                <form onSubmit={handleSendMessage} className="chat-form">
+                  <input 
+                    type="text" 
+                    placeholder="Say something..." 
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    className="chat-input"
+                  />
+                  <button type="submit" className="chat-send-btn">
+                    <Send size={18} />
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

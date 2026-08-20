@@ -78,17 +78,13 @@ const Shorts = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!feedRef.current) return;
-      
       const containerHeight = feedRef.current.clientHeight;
-      
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (activeVideoIndex < filteredShorts.length - 1) {
-          feedRef.current.scrollTo({
-            top: (activeVideoIndex + 1) * containerHeight,
-            behavior: 'smooth'
-          });
-        }
+        feedRef.current.scrollTo({
+          top: (activeVideoIndex + 1) * containerHeight,
+          behavior: 'smooth'
+        });
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (activeVideoIndex > 0) {
@@ -99,10 +95,24 @@ const Shorts = () => {
         }
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeVideoIndex, displayedShorts.length]);
+
+  // Passive touch listeners — { passive: true } tells the browser the handler
+  // will never call e.preventDefault(), so it can start scrolling immediately
+  // without waiting for JS. This is the key to 120fps mobile scroll.
+  useEffect(() => {
+    const feed = feedRef.current;
+    if (!feed) return;
+    const noop = () => {};
+    feed.addEventListener('touchstart', noop, { passive: true });
+    feed.addEventListener('touchmove', noop, { passive: true });
+    return () => {
+      feed.removeEventListener('touchstart', noop);
+      feed.removeEventListener('touchmove', noop);
+    };
+  }, []);
 
 
 
@@ -114,8 +124,8 @@ const Shorts = () => {
         setActiveCategory={setActiveCategory} 
       />
 
-      {/* Vertical Feed */}
-      <div className="shorts-feed-container" ref={feedRef}>
+      {/* Vertical Feed — will-change: transform promotes to GPU layer for 120fps */}
+      <div className="shorts-feed-container" ref={feedRef} style={{ willChange: 'transform' }}>
         {displayedShorts.length > 0 ? (
           displayedShorts.map((short, index) => (
             <div 

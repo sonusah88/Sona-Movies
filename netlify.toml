@@ -1,3 +1,67 @@
-[build]
+﻿[build]
   command = "npm run build"
   publish = "dist"
+
+# ─── Functions (serverless API) ───────────────────────────────────────────────
+[functions]
+  directory = "api"
+
+# ─── Redirects ────────────────────────────────────────────────────────────────
+# SPA catch-all: all routes serve index.html so React Router handles navigation
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ─── Headers ──────────────────────────────────────────────────────────────────
+
+# Vite-hashed static assets — safe to cache permanently (filename changes on every build)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Service Worker — must NEVER be cached by the browser (always fetches fresh)
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Fonts
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control  = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+# Static public assets (logo, favicon, icons) — cache 1 week
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+# API endpoints — CDN edge caches for 1 hour; stale served for 24 h while revalidating
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control                = "public, s-maxage=3600, stale-while-revalidate=86400"
+    Access-Control-Allow-Origin  = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+# Global security headers applied to every response
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options  = "nosniff"
+    X-Frame-Options         = "SAMEORIGIN"
+    X-XSS-Protection        = "1; mode=block"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
+    Permissions-Policy      = "camera=(), microphone=(), geolocation=()"
+    # Enable Speculation Rules prerendering support
+    Supports-Loading-Mode   = "fenced-frame"
