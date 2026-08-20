@@ -106,11 +106,8 @@ const VidkingPlayer = ({
   isHindi = false,
 }) => {
   const [serverIndex, setServerIndex]     = useState(0);
-  const [showHelp, setShowHelp]           = useState(false);
-  const [showVolumeBooster, setShowVolumeBooster] = useState(false);
   const [isRotated, setIsRotated]         = useState(false);
   const [showVpnBanner, setShowVpnBanner] = useState(true);
-  const [reported, setReported]           = useState(false);
 
   const qos = useRef(null);
   const wrapperRef = useRef(null);
@@ -167,20 +164,7 @@ const VidkingPlayer = ({
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  // ── Report Issue ───────────────────────────────────────────────────────────
-  const handleReport = useCallback(() => {
-    // Log the report — wire to a webhook / analytics endpoint in production
-    console.log("[Report Issue]", {
-      mediaId: tmdbId,
-      type,
-      server: SERVERS[serverIndex]?.id,
-      title,
-      reportedAt: new Date().toISOString(),
-    });
-    setReported(true);
-    // Reset the button label after 3 seconds
-    setTimeout(() => setReported(false), 3000);
-  }, [tmdbId, type, serverIndex, title]);
+
 
   // ── Server tracking ────────────────────────────────────────────────────────
   const prevServerIndex = useRef(serverIndex);
@@ -193,8 +177,6 @@ const VidkingPlayer = ({
       prevServerIndex.current = newIndex;
     }
     setServerIndex(newIndex);
-    setShowHelp(false);
-    setShowVolumeBooster(false);
   }, []);
 
   const handleIframeLoad = useCallback(() => {
@@ -433,41 +415,10 @@ const VidkingPlayer = ({
         <button
           className="server-btn mobile-only"
           style={{ marginLeft: "auto", background: "rgba(255,193,7,0.1)", color: "#ffc107", borderColor: "#ffc107" }}
-          onClick={() => { setIsRotated(true); setShowHelp(false); setShowVolumeBooster(false); }}
+          onClick={() => { setIsRotated(true); }}
           title="Rotate Video"
         >
           🔄 Rotate
-        </button>
-
-        <button
-          className="server-btn"
-          style={{ background: "rgba(57,255,20,0.1)", color: "#39ff14", borderColor: "#39ff14" }}
-          onClick={() => { setShowVolumeBooster(!showVolumeBooster); setShowHelp(false); }}
-        >
-          🔊 Volume Booster
-        </button>
-
-        {/* Report Issue button */}
-        <button
-          className="server-btn"
-          style={{
-            background: reported ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.1)",
-            color: reported ? "#22c55e" : "#f87171",
-            borderColor: reported ? "#22c55e" : "#f87171",
-            transition: "all 0.3s ease",
-          }}
-          onClick={handleReport}
-          title="Report broken video"
-        >
-          <Flag size={13} />
-          {reported ? "Reported!" : "Report Issue"}
-        </button>
-
-        <button
-          className="server-btn help-btn"
-          onClick={() => { setShowHelp(!showHelp); setShowVolumeBooster(false); }}
-        >
-          <AlertTriangle size={14} /> Help
         </button>
       </div>
 
@@ -481,35 +432,6 @@ const VidkingPlayer = ({
         Hotkeys: <kbd style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, padding: "1px 5px" }}>Space</kbd> focus &nbsp;
         <kbd style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, padding: "1px 5px" }}>F</kbd> fullscreen
       </div>
-
-      {/* Volume booster panel */}
-      {showVolumeBooster && (
-        <div className="player-help glass" style={{ borderColor: "#39ff14", background: "rgba(57,255,20,0.05)" }}>
-          <h4 style={{ color: "#39ff14" }}>🔊 How to Boost Volume up to 600%</h4>
-          <p>Because movies are streamed from external servers, websites cannot force volume above 100%. Install a free extension to boost it!</p>
-          <div className="help-links">
-            <a href="https://chrome.google.com/webstore/detail/volume-master/jghecgabfgfdldnmbfkhmffcabokigjc" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ borderColor: "#39ff14", color: "#39ff14" }}>
-              Download Volume Booster for Chrome
-            </a>
-          </div>
-        </div>
-      )}
-
-      {/* Help panel */}
-      {showHelp && (
-        <div className="player-help glass">
-          <h4>🎬 Movie not playing on any server?</h4>
-          <p>Some regional movies may not be available. Try these alternatives:</p>
-          <div className="help-links">
-            <a href={`https://www.youtube.com/results?search_query=${searchQuery}`} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
-              <Search size={16} /> Search on YouTube
-            </a>
-            <a href={`https://www.google.com/search?q=${searchQuery}`} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
-              <Search size={16} /> Search on Google
-            </a>
-          </div>
-        </div>
-      )}
 
       {/* VPN banner */}
       {showVpnBanner && (
