@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
+import Skeleton from '../ui/Skeleton';
 import '../../pages/Library/Library.css'; // Shared CSS
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, isLoading = false }) => {
   const navigate = useNavigate();
 
   const getAccessBadgeClass = (type) => {
@@ -25,6 +26,20 @@ const BookCard = ({ book }) => {
   const getAccessLabel = (type) => {
     return type.replace('_', ' ');
   };
+
+  if (isLoading || !book) {
+    return (
+      <div className="book-card">
+        <div className="book-cover-container" style={{ aspectRatio: '2/3', borderRadius: '8px', overflow: 'hidden' }}>
+          <Skeleton style={{ width: '100%', height: '100%' }} />
+        </div>
+        <div className="book-info" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <Skeleton style={{ width: '80%', height: '16px', borderRadius: '4px' }} />
+          <Skeleton style={{ width: '60%', height: '12px', borderRadius: '4px' }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="book-card" onClick={() => navigate(`/library/book/${book.id}`, { state: { book } })}>

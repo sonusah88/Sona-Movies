@@ -61,63 +61,36 @@ const ProfileModal = ({ isOpen, onClose }) => {
             <div className="auth-icon-wrapper">
               <User size={48} color="var(--accent)" />
             </div>
-            <h2>{authMode === 'login' ? 'Welcome Back' : 'Join SONA'}</h2>
-            <p>{authMode === 'login' ? 'Login to access your history and favorites.' : 'Create an account to save your watch history and favorites.'}</p>
+            <h2>Welcome to SONA</h2>
+            <p>Login or create an account to securely save your watch history and favorites across devices.</p>
             
-            {errorMsg && <div className="auth-error" style={{ color: '#ff3366', marginBottom: '1rem', fontSize: '0.9rem' }}>{errorMsg}</div>}
-            
-            <form onSubmit={handleAuth} className="auth-form">
-              {authMode === 'signup' && (
-                <input 
-                  type="text" 
-                  placeholder="Username" 
-                  value={usernameInput}
-                  onChange={e => setUsernameInput(e.target.value)}
-                  required
-                  maxLength={20}
-                />
-              )}
-              <input 
-                type="email" 
-                placeholder="Email address" 
-                value={emailInput}
-                onChange={e => setEmailInput(e.target.value)}
-                required
-              />
-              <input 
-                type="password" 
-                placeholder="Password" 
-                value={passwordInput}
-                onChange={e => setPasswordInput(e.target.value)}
-                required
-                minLength={6}
-              />
-              <button type="submit" className="btn btn-primary auth-submit">
-                {authMode === 'login' ? 'Login' : 'Sign Up'}
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
+              <button onClick={() => { onClose(); login(); }} className="btn btn-primary" style={{ minWidth: '120px' }}>
+                Login
               </button>
-            </form>
-            <div style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>
-              {authMode === 'login' ? (
-                <>Don't have an account? <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => { setAuthMode('signup'); setErrorMsg(''); }}>Sign Up</span></>
-              ) : (
-                <>Already have an account? <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => { setAuthMode('login'); setErrorMsg(''); }}>Login</span></>
-              )}
+              <button onClick={() => { onClose(); signup(); }} className="btn btn-secondary" style={{ minWidth: '120px' }}>
+                Sign Up
+              </button>
             </div>
           </div>
         ) : (
           <div className="profile-dashboard">
             <div className="profile-header">
               <div className="profile-user-info">
-                <div className="profile-avatar">
-                  {user.username.charAt(0).toUpperCase()}
-                </div>
+                {user.avatar ? (
+                  <img src={user.avatar} alt="Profile" className="profile-avatar" style={{ border: 'none', objectFit: 'cover' }} />
+                ) : (
+                  <div className="profile-avatar">
+                    {(user.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div>
-                  <h3>{user.username}</h3>
-                  <p>SONA Member</p>
+                  <h3>{user.name}</h3>
+                  <p>{user.email || 'SONA Member'}</p>
                 </div>
               </div>
-              <button onClick={logout} className="btn-logout" title="Logout">
-                <LogOut size={18} />
+              <button onClick={() => { onClose(); logout(); }} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <LogOut size={16} /> Logout
               </button>
             </div>
 

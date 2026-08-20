@@ -1,7 +1,8 @@
-﻿// src/components/MediaGrid.jsx
+// src/components/MediaGrid.jsx
 import React, { useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Play, Star, Film } from "lucide-react";
+import Skeleton from "./ui/Skeleton";
 import "./MediaGrid.css";
 
 // ---------------------------------------------------------------------------
@@ -122,7 +123,7 @@ MediaCard.displayName = "MediaCard";
 // Injects Speculation Rules for the first PRERENDER_COUNT items so Chrome
 // prerenders their Detail pages in the background at idle time.
 // ---------------------------------------------------------------------------
-const MediaGrid = ({ title, items, tag, layout = "grid" }) => {
+const MediaGrid = ({ title, items, tag, layout = "grid", isLoading = false }) => {
   const memoItems = useMemo(() => items || [], [items]);
   const didInject = useRef(false);
 
@@ -148,7 +149,7 @@ const MediaGrid = ({ title, items, tag, layout = "grid" }) => {
     };
   }, [memoItems, layout]);
 
-  if (!memoItems.length) return null;
+  if (!isLoading && !memoItems.length) return null;
 
   return (
     <div className={`container media-grid-section fade-in layout-${layout}`}>
@@ -159,9 +160,16 @@ const MediaGrid = ({ title, items, tag, layout = "grid" }) => {
         </h2>
       </div>
       <div className={`media-grid ${layout === "slider" ? "is-slider" : "is-grid"}`}>
-        {memoItems.map((item) => (
-          <MediaCard key={item.id} item={item} />
-        ))}
+        {isLoading 
+          ? Array.from({ length: 12 }).map((_, idx) => (
+              <div key={`skeleton-${idx}`} className="media-card-skeleton" style={{ aspectRatio: '2/3', borderRadius: '12px', overflow: 'hidden' }}>
+                 <Skeleton style={{ width: '100%', height: '100%' }} />
+              </div>
+            ))
+          : memoItems.map((item) => (
+              <MediaCard key={item.id} item={item} />
+            ))
+        }
       </div>
     </div>
   );
