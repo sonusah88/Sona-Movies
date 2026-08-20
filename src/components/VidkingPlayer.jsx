@@ -244,7 +244,26 @@ const VidkingPlayer = ({
 
   // ── WebRTC Virtual Cinema (Room Management) ──────────────────────────────────
   const [roomId, setRoomId] = useState(null);
+  const [joinCodeInput, setJoinCodeInput] = useState("");
   const [userId] = useState(() => "user-" + Math.random().toString(36).substring(2, 9));
+  const [syncCountdown, setSyncCountdown] = useState(null);
+
+  const startSyncCountdown = useCallback(() => {
+    // In a real networked app, this would broadcast via useWatchParty
+    let count = 3;
+    setSyncCountdown(count);
+    const interval = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setSyncCountdown(count);
+      } else if (count === 0) {
+        setSyncCountdown("GO! (Press Play)");
+      } else {
+        clearInterval(interval);
+        setSyncCountdown(null);
+      }
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -255,12 +274,23 @@ const VidkingPlayer = ({
   }, []);
 
   const handleCreateRoom = useCallback(() => {
-    const newRoomId = crypto.randomUUID();
+    // Generate a short 6-character alphanumeric code
+    const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     const url = new URL(window.location);
     url.searchParams.set("room", newRoomId);
     window.history.pushState({}, "", url);
     setRoomId(newRoomId);
   }, []);
+
+  const handleJoinRoomSubmit = useCallback((e) => {
+    e.preventDefault();
+    if (!joinCodeInput.trim()) return;
+    const cleanCode = joinCodeInput.trim().toUpperCase();
+    const url = new URL(window.location);
+    url.searchParams.set("room", cleanCode);
+    window.history.pushState({}, "", url);
+    setRoomId(cleanCode);
+  }, [joinCodeInput]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -286,23 +316,51 @@ const VidkingPlayer = ({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(9, 9, 11, 0.8)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(0, 229, 255, 0.3)', boxShadow: '0 4px 20px rgba(0, 229, 255, 0.1)', marginBottom: '0.5rem' }}>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent)' }}>Virtual Cinema</span>
-          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>{roomId ? `Room: ${roomId.substring(0,6)}...` : 'Watch with friends'}</span>
+          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>{roomId ? `Room Code: ${roomId}` : 'Watch with friends'}</span>
         </div>
         
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           {!roomId ? (
-            <button 
-              className="btn btn-primary"
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
-              onClick={handleCreateRoom}
-            >
-              👥 Create Watch Party
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button 
+                className="btn btn-primary"
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
+                onClick={handleCreateRoom}
+              >
+                👥 Create Party
+              </button>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem' }}>or</span>
+              <form onSubmit={handleJoinRoomSubmit} style={{ display: 'flex', gap: '0.25rem' }}>
+                <input 
+                  type="text" 
+                  placeholder="Enter Code..." 
+                  value={joinCodeInput}
+                  onChange={(e) => setJoinCodeInput(e.target.value)}
+                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem', width: '110px' }}
+                />
+                <button 
+                  type="submit"
+                  className="btn btn-outline"
+                  style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold' }} 
+                >
+                  Join
+                </button>
+              </form>
+            </div>
           ) : (
             <>
               <button 
                 className="btn btn-outline"
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
+                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold', color: '#ffb300', borderColor: '#ffb300' }} 
+                onClick={startSyncCountdown}
+                title="Start a 3-second countdown to sync playback with friends"
+              >
+                ⏱️ Sync Play
+              </button>
+
+              <button 
+                className="btn btn-outline"
+                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold' }} 
                 onClick={handleCopyLink}
               >
                 📋 Copy Invite
@@ -488,6 +546,21 @@ const VidkingPlayer = ({
             allowFullScreen allow="autoplay; encrypted-media; fullscreen"
             referrerPolicy="origin" title="Video Player" onLoad={handleIframeLoad}
           />
+        </div>
+      )}
+      {/* ── Sync Countdown Overlay ── */}
+      {syncCountdown && (
+        <div style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          background: 'rgba(0,0,0,0.6)', zIndex: 9999, pointerEvents: 'none'
+        }}>
+          <h1 style={{
+            fontSize: '8rem', color: 'white', textShadow: '0 0 40px rgba(0, 229, 255, 1)',
+            fontWeight: '900', margin: 0, animation: 'pulse 1s infinite'
+          }}>
+            {syncCountdown}
+          </h1>
         </div>
       )}
     </div>

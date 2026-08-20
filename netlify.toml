@@ -1,4 +1,4 @@
-﻿[build]
+[build]
   command = "npm run build"
   publish = "dist"
 
@@ -62,6 +62,7 @@
     X-Frame-Options         = "SAMEORIGIN"
     X-XSS-Protection        = "1; mode=block"
     Referrer-Policy         = "strict-origin-when-cross-origin"
-    Permissions-Policy      = "camera=(), microphone=(), geolocation=()"
+    # UPDATED: Allow camera and mic for WebRTC Virtual Cinema!
+    Permissions-Policy      = "camera=(self), microphone=(self), geolocation=()"
     # Enable Speculation Rules prerendering support
     Supports-Loading-Mode   = "fenced-frame"

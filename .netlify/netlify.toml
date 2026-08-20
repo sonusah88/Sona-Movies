@@ -1,5 +1,8 @@
+headersOrigin = "config"
+redirectsOrigin = "config"
 plugins = []
-headers = []
+functionsDirectory = "D:\\New folder\\New folder (2)\\api"
+functionsDirectoryOrigin = "config"
 
 [functions]
 
@@ -10,6 +13,7 @@ publish = "D:\\New folder\\New folder (2)\\dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "npm run build"
+functions = "D:\\New folder\\New folder (2)\\api"
 
 [build.environment]
 
@@ -24,6 +28,57 @@ command = "npm run build"
 [build.processing.js]
 
 [build.services]
+
+[[headers]]
+for = "/assets/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/sw.js"
+
+[headers.values]
+Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+for = "/fonts/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+Access-Control-Allow-Origin = "*"
+
+[[headers]]
+for = "/*.png"
+
+[headers.values]
+Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+for = "/*.svg"
+
+[headers.values]
+Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+for = "/api/*"
+
+[headers.values]
+Cache-Control = "public, s-maxage=3600, stale-while-revalidate=86400"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+Access-Control-Allow-Headers = "Content-Type"
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "SAMEORIGIN"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "camera=(self), microphone=(self), geolocation=()"
+Supports-Loading-Mode = "fenced-frame"
 
 [[redirects]]
 from = "/*"
