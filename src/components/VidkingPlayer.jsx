@@ -267,6 +267,14 @@ const VidkingPlayer = ({
     alert("Invite link copied to clipboard!");
   }, []);
 
+  const handleLeaveRoom = useCallback(() => {
+    if (isJoined) leaveCall();
+    const url = new URL(window.location);
+    url.searchParams.delete("room");
+    window.history.pushState({}, "", url);
+    setRoomId(null);
+  }, [isJoined, leaveCall]);
+
   // Use dynamic roomId instead of "demo-room"
   const { localStream, remoteStreams, isJoined, joinCall, leaveCall } = useWebRTC(roomId, userId, true);
 
@@ -297,7 +305,7 @@ const VidkingPlayer = ({
                 style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
                 onClick={handleCopyLink}
               >
-                📋 Copy Invite Link
+                📋 Copy Invite
               </button>
               
               <button 
@@ -305,7 +313,16 @@ const VidkingPlayer = ({
                 style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: isJoined ? '0 0 15px rgba(255, 0, 60, 0.4)' : '0 0 15px rgba(0, 229, 255, 0.4)' }} 
                 onClick={isJoined ? leaveCall : joinCall}
               >
-                {isJoined ? <><VideoOff size={16} /> Leave Call</> : <><Video size={16} /> Join with Camera/Mic</>}
+                {isJoined ? <><VideoOff size={16} /> Leave Call</> : <><Video size={16} /> Join Call</>}
+              </button>
+
+              <button 
+                className="btn btn-secondary"
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: '#ff4d4f', borderColor: '#ff4d4f' }} 
+                onClick={handleLeaveRoom}
+                title="Exit Room completely"
+              >
+                <X size={16} /> Exit Room
               </button>
             </>
           )}
