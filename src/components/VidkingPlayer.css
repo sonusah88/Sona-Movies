@@ -289,7 +289,7 @@
 /* -- WebRTC Virtual Cinema -- */
 .webrtc-floating-container {
   position: absolute;
-  top: 1rem;
+  top: 5rem;
   right: 1rem;
   width: 10vw;
   min-width: 120px;

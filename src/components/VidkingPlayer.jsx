@@ -249,6 +249,22 @@ const VidkingPlayer = ({
   return (
     <div className="vidking-wrapper" ref={wrapperRef}>
 
+      {/* ── WebRTC Action Bar (Top) ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(9, 9, 11, 0.8)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(0, 229, 255, 0.3)', boxShadow: '0 4px 20px rgba(0, 229, 255, 0.1)', marginBottom: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent)' }}>Virtual Cinema</span>
+          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Watch with friends</span>
+        </div>
+        
+        <button 
+          className={`btn ${isJoined ? 'btn-danger' : 'btn-primary'}`} 
+          style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: isJoined ? '0 0 15px rgba(255, 0, 60, 0.4)' : '0 0 15px rgba(0, 229, 255, 0.4)' }} 
+          onClick={isJoined ? leaveCall : joinCall}
+        >
+          {isJoined ? <><VideoOff size={16} /> Leave Call</> : <><Video size={16} /> Join with Camera/Mic</>}
+        </button>
+      </div>
+
       {/* ── WebRTC Floating Container (10%) ── */}
       {isJoined && (
         <div className="webrtc-floating-container">
