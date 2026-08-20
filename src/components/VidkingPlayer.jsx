@@ -289,30 +289,30 @@ const VidkingPlayer = ({
     <div className="vidking-wrapper" ref={wrapperRef}>
 
       {/* ── WebRTC Action Bar (Top) ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0, 0, 0, 0.4)', padding: '0.75rem 1.25rem', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)', marginBottom: '1rem', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+      <div className="virtual-cinema-bar">
+        <div className="virtual-cinema-bar-left">
           <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent)' }}>Virtual Cinema</span>
           <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>{roomId ? `Room Code: ${roomId}` : 'Watch with friends'}</span>
         </div>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="virtual-cinema-controls">
           {!roomId ? (
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <>
               <button 
                 className="btn btn-primary"
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', whiteSpace: 'nowrap' }} 
                 onClick={handleCreateRoom}
               >
                 👥 Create Party
               </button>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem' }}>or</span>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>or</span>
               <form onSubmit={handleJoinRoomSubmit} style={{ display: 'flex', gap: '0.25rem' }}>
                 <input 
                   type="text" 
                   placeholder="Enter Code..." 
                   value={joinCodeInput}
                   onChange={(e) => setJoinCodeInput(e.target.value)}
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.4rem 0.75rem', borderRadius: '8px', fontSize: '0.85rem', width: '110px', outline: 'none' }}
+                  className="virtual-cinema-input"
                 />
                 <button 
                   type="submit"
@@ -322,12 +322,12 @@ const VidkingPlayer = ({
                   Join
                 </button>
               </form>
-            </div>
+            </>
           ) : (
             <>
               <button 
                 className="btn btn-outline"
-                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold', color: '#ffb300', borderColor: '#ffb300' }} 
+                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold', color: '#ffb300', borderColor: '#ffb300', whiteSpace: 'nowrap' }} 
                 onClick={startSyncCountdown}
                 title="Start a 3-second countdown to sync playback with friends"
               >
@@ -336,7 +336,7 @@ const VidkingPlayer = ({
 
               <button 
                 className="btn btn-outline"
-                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold' }} 
+                style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', fontWeight: 'bold', whiteSpace: 'nowrap' }} 
                 onClick={handleCopyLink}
               >
                 📋 Copy Invite
@@ -344,7 +344,7 @@ const VidkingPlayer = ({
               
               <button 
                 className={`btn ${isJoined ? 'btn-danger' : 'btn-primary'}`} 
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', whiteSpace: 'nowrap' }} 
                 onClick={isJoined ? leaveCall : joinCall}
               >
                 {isJoined ? <><VideoOff size={16} /> Leave Call</> : <><Video size={16} /> Join Call</>}
@@ -352,7 +352,7 @@ const VidkingPlayer = ({
 
               <button 
                 className="btn btn-secondary"
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: '#ff4d4f', borderColor: '#ff4d4f' }} 
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: '#ff4d4f', borderColor: '#ff4d4f', whiteSpace: 'nowrap' }} 
                 onClick={handleLeaveRoom}
                 title="Exit Room completely"
               >
