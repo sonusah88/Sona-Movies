@@ -267,6 +267,9 @@ const VidkingPlayer = ({
     alert("Invite link copied to clipboard!");
   }, []);
 
+  // Use dynamic roomId instead of "demo-room"
+  const { localStream, remoteStreams, isJoined, joinCall, leaveCall } = useWebRTC(roomId, userId, true);
+
   const handleLeaveRoom = useCallback(() => {
     if (isJoined) leaveCall();
     const url = new URL(window.location);
@@ -274,9 +277,6 @@ const VidkingPlayer = ({
     window.history.pushState({}, "", url);
     setRoomId(null);
   }, [isJoined, leaveCall]);
-
-  // Use dynamic roomId instead of "demo-room"
-  const { localStream, remoteStreams, isJoined, joinCall, leaveCall } = useWebRTC(roomId, userId, true);
 
   // ── Main player ────────────────────────────────────────────────────────────
   return (
