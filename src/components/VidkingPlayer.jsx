@@ -31,12 +31,6 @@ const SERVERS = [
     tvUrl: (id, s, e) => `https://vidsrc.to/embed/tv/${id}/${s}/${e}`,
   },
   {
-    id: "2embed",
-    name: "Server 3",
-    movieUrl: (id) => `https://www.2embed.cc/embed/${id}`,
-    tvUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
-  },
-  {
     id: "multiembed",
     name: "Server 4",
     movieUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
@@ -44,10 +38,10 @@ const SERVERS = [
   },
   {
     id: "vidlink",
-    name: "Server 6",
+    name: "Server 5",
     movieUrl: (id) => `https://vidlink.pro/movie/${id}`,
     tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
-  },
+  }
 ];
 
 // ---------------------------------------------------------------------------
@@ -256,8 +250,8 @@ const VidkingPlayer = ({
   }, []);
 
   const handleCreateRoom = useCallback(() => {
-    // Generate a short 6-character alphanumeric code
-    const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+    // Generate a 6-digit numeric code
+    const newRoomId = Math.floor(100000 + Math.random() * 900000).toString();
     const url = new URL(window.location);
     url.searchParams.set("room", newRoomId);
     window.history.pushState({}, "", url);
@@ -295,7 +289,7 @@ const VidkingPlayer = ({
     <div className="vidking-wrapper" ref={wrapperRef}>
 
       {/* ── WebRTC Action Bar (Top) ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(9, 9, 11, 0.8)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(0, 229, 255, 0.3)', boxShadow: '0 4px 20px rgba(0, 229, 255, 0.1)', marginBottom: '0.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0, 0, 0, 0.4)', padding: '0.75rem 1.25rem', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)', marginBottom: '1rem', overflowX: 'auto', whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--accent)' }}>Virtual Cinema</span>
           <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>{roomId ? `Room Code: ${roomId}` : 'Watch with friends'}</span>
@@ -318,7 +312,7 @@ const VidkingPlayer = ({
                   placeholder="Enter Code..." 
                   value={joinCodeInput}
                   onChange={(e) => setJoinCodeInput(e.target.value)}
-                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '0.4rem 0.75rem', borderRadius: '4px', fontSize: '0.85rem', width: '110px' }}
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.4rem 0.75rem', borderRadius: '8px', fontSize: '0.85rem', width: '110px', outline: 'none' }}
                 />
                 <button 
                   type="submit"
@@ -350,7 +344,7 @@ const VidkingPlayer = ({
               
               <button 
                 className={`btn ${isJoined ? 'btn-danger' : 'btn-primary'}`} 
-                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', boxShadow: isJoined ? '0 0 15px rgba(255, 0, 60, 0.4)' : '0 0 15px rgba(0, 229, 255, 0.4)' }} 
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }} 
                 onClick={isJoined ? leaveCall : joinCall}
               >
                 {isJoined ? <><VideoOff size={16} /> Leave Call</> : <><Video size={16} /> Join Call</>}
