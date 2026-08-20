@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { BookOpen, Star, Share2, BookmarkPlus, ArrowLeft, ExternalLink, Library } from 'lucide-react';
 import './Library.css';
 
@@ -69,6 +70,19 @@ const BookDetails = () => {
 
   return (
     <div className="library-container fade-in">
+      {/* ── Dynamic SEO tags ──────────────────────────────────────────────── */}
+      <Helmet>
+        <title>{`${book.title} by ${book.author} — Sona Movies Library`}</title>
+        <meta name="description" content={book.description ? book.description.substring(0, 160) : `Read ${book.title} by ${book.author} for free on Sona Movies Library.`} />
+        <meta property="og:type"        content="book" />
+        <meta property="og:title"       content={`${book.title} — Sona Movies Library`} />
+        <meta property="og:description" content={book.description ? book.description.substring(0, 160) : `Free book on Sona Movies Library.`} />
+        <meta property="og:image"       content={book.cover || `https://sonamoviesss.netlify.app/logo.png`} />
+        <meta property="og:site_name"   content="Sona Movies" />
+        <meta name="twitter:card"       content="summary" />
+        <meta name="twitter:title"      content={`${book.title} — Sona Movies Library`} />
+        <meta name="twitter:image"      content={book.cover || `https://sonamoviesss.netlify.app/logo.png`} />
+      </Helmet>
       <button className="back-button" onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '20px' }}>
         <ArrowLeft size={20} /> Back to Library
       </button>

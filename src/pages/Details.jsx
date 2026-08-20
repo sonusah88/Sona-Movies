@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Play, ArrowLeft, Star, Clock, Calendar, Layers, Heart, ShieldCheck, X } from 'lucide-react';
 import { fetchDetails, fetchSeasonDetails, fetchTrailer } from '../lib/tmdb';
 import { useUser } from '../context/UserContext';
@@ -167,11 +168,37 @@ const Details = () => {
     }
   };
 
+  // Build OG meta values
+  const ogTitle       = `${details.title || details.name} — Sona Movies`;
+  const ogDescription = details.overview
+    ? details.overview.substring(0, 160)
+    : `Watch ${details.title || details.name} on Sona Movies — free streaming.`;
+  const ogImage       = details.backdrop_path
+    ? (details.backdrop_path.startsWith('http')
+        ? details.backdrop_path
+        : `https://image.tmdb.org/t/p/w1280${details.backdrop_path}`)
+    : `https://sonamoviesss.netlify.app/logo.png`;
+
   return (
     <div className="details-page fade-in">
-      <div 
+      {/* ── Dynamic SEO & Social OG tags ───────────────────────────────────── */}
+      <Helmet>
+        <title>{ogTitle}</title>
+        <meta name="description" content={ogDescription} />
+        <meta property="og:type"        content="video.movie" />
+        <meta property="og:title"       content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image"       content={ogImage} />
+        <meta property="og:url"         content={`https://sonamoviesss.netlify.app/details/${type}/${id}`} />
+        <meta property="og:site_name"   content="Sona Movies" />
+        <meta name="twitter:card"        content="summary_large_image" />
+        <meta name="twitter:title"       content={ogTitle} />
+        <meta name="twitter:description" content={ogDescription} />
+        <meta name="twitter:image"       content={ogImage} />
+      </Helmet>
+      <div
         className="details-backdrop"
-        style={{ backgroundImage: details.backdrop_path ? `url(${details.backdrop_path})` : 'none' }}
+        style={{ backgroundImage: details.backdrop_path ? `url(${details.backdrop_path.startsWith('http') ? details.backdrop_path : `https://image.tmdb.org/t/p/w1280${details.backdrop_path}`})` : 'none' }}
       >
         <div className="details-overlay"></div>
       </div>
