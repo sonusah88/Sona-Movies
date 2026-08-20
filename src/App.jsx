@@ -1,8 +1,7 @@
-﻿import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { UserProvider } from "./context/UserContext";
-import { LangProvider } from "./context/LangContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -69,13 +68,11 @@ const AppContent = () => {
 function App() {
   return (
     <HelmetProvider>
-      <LangProvider>
-        <UserProvider>
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
-        </UserProvider>
-      </LangProvider>
+      <UserProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </UserProvider>
     </HelmetProvider>
   );
 }

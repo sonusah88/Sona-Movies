@@ -1,9 +1,8 @@
-﻿// src/components/VidkingPlayer.jsx
+// src/components/VidkingPlayer.jsx
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Search, AlertTriangle, X, Flag } from "lucide-react";
 import latentData from "../data/latent.json";
-import { useLang } from "../context/LangContext";
 import "./VidkingPlayer.css";
 
 // ---------------------------------------------------------------------------
@@ -112,7 +111,6 @@ const VidkingPlayer = ({
   const [showVpnBanner, setShowVpnBanner] = useState(true);
   const [reported, setReported]           = useState(false);
 
-  const { t } = useLang();
   const qos = useRef(null);
   const wrapperRef = useRef(null);
 
@@ -249,7 +247,7 @@ const VidkingPlayer = ({
 
       {/* Server selector bar */}
       <div className="server-bar glass">
-        <span className="server-label">{t("switchServer")}</span>
+        <span className="server-label">Switch server if not playing:</span>
         {SERVERS.map((s, i) => (
           <button
             key={s.id}
@@ -264,9 +262,9 @@ const VidkingPlayer = ({
           className="server-btn mobile-only"
           style={{ marginLeft: "auto", background: "rgba(255,193,7,0.1)", color: "#ffc107", borderColor: "#ffc107" }}
           onClick={() => { setIsRotated(true); setShowHelp(false); setShowVolumeBooster(false); }}
-          title={t("rotate")}
+          title="Rotate Video"
         >
-          🔄 {t("rotate")}
+          🔄 Rotate
         </button>
 
         <button
@@ -274,7 +272,7 @@ const VidkingPlayer = ({
           style={{ background: "rgba(57,255,20,0.1)", color: "#39ff14", borderColor: "#39ff14" }}
           onClick={() => { setShowVolumeBooster(!showVolumeBooster); setShowHelp(false); }}
         >
-          🔊 {t("volumeBoost")}
+          🔊 Volume Booster
         </button>
 
         {/* Report Issue button */}
@@ -290,14 +288,14 @@ const VidkingPlayer = ({
           title="Report broken video"
         >
           <Flag size={13} />
-          {reported ? t("reported") : t("reportIssue")}
+          {reported ? "Reported!" : "Report Issue"}
         </button>
 
         <button
           className="server-btn help-btn"
           onClick={() => { setShowHelp(!showHelp); setShowVolumeBooster(false); }}
         >
-          <AlertTriangle size={14} /> {t("help")}
+          <AlertTriangle size={14} /> Help
         </button>
       </div>
 
