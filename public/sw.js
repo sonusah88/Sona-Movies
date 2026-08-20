@@ -1,18 +1,19 @@
-﻿// public/sw.js — Sona-Movies Service Worker
-// Strategy overview:
-//   /assets/*  ->  Cache-First (hashed filenames, safe to cache forever)
-//   /api/*     ->  Network-First with cache fallback (fresh data preferred, stale OK)
-//   TMDB imgs  ->  Stale-While-Revalidate (always paint instantly, refresh in background)
-//   Navigate   ->  Network-First (always try fresh HTML; fall back to cached shell)
+﻿// public/sw.js — Sona-Movies Service Worker v2
+// Caching strategy:
+//   /assets/*        -> Cache-First  (hashed, safe to cache forever)
+//   /offline.html    -> Pre-cached on install (served when navigate fails)
+//   image.tmdb.org   -> Stale-While-Revalidate (instant paint, bg refresh)
+//   /api/*           -> Network-First with 5s timeout, then cache fallback
+//   navigate         -> Network-First, fall back to /offline.html
 
-const CACHE_VERSION = "sona-v1";
+const CACHE_VERSION = "sona-v2";
 const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const API_CACHE     = `${CACHE_VERSION}-api`;
 const IMAGE_CACHE   = `${CACHE_VERSION}-images`;
 
-// Assets to pre-cache on install (Vite hashes these, so they never change)
 const PRECACHE_ASSETS = [
   "/",
+  "/offline.html",
   "/favicon.svg",
   "/logo.png",
 ];
@@ -20,23 +21,32 @@ const PRECACHE_ASSETS = [
 // ─── Install ──────────────────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) =>
-      // skipWaiting so the new SW activates immediately without waiting for old tabs to close
-      cache.addAll(PRECACHE_ASSETS).then(() => self.skipWaiting())
-    )
+    caches
+      .open(STATIC_CACHE)
+      .then((cache) => cache.addAll(PRECACHE_ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
 // ─── Activate ─────────────────────────────────────────────────────────────────
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key.startsWith("sona-") && key !== STATIC_CACHE && key !== API_CACHE && key !== IMAGE_CACHE)
-          .map((key) => caches.delete(key)) // delete stale caches from old SW versions
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter(
+              (k) =>
+                k.startsWith("sona-") &&
+                k !== STATIC_CACHE &&
+                k !== API_CACHE &&
+                k !== IMAGE_CACHE
+            )
+            .map((k) => caches.delete(k))
+        )
       )
-    ).then(() => self.clients.claim()) // take control of all open tabs immediately
+      .then(() => self.clients.claim())
   );
 });
 
@@ -45,88 +55,85 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle GET requests
   if (request.method !== "GET") return;
 
-  // 1. Vite-hashed static assets — Cache-First (permanent cache)
+  // 1. Vite-hashed static assets — Cache-First
   if (url.pathname.startsWith("/assets/")) {
-    event.respondWith(cacheFirst(request, STATIC_CACHE, { maxAge: 365 * 24 * 60 * 60 }));
+    event.respondWith(cacheFirst(request, STATIC_CACHE));
     return;
   }
 
-  // 2. TMDB poster & backdrop images — Stale-While-Revalidate
+  // 2. TMDB poster/backdrop images — Stale-While-Revalidate
   if (url.hostname === "image.tmdb.org") {
     event.respondWith(staleWhileRevalidate(request, IMAGE_CACHE));
     return;
   }
 
-  // 3. API calls (/api/*) — Network-First with 5-second timeout, then cache fallback
+  // 3. API calls — Network-First with timeout
   if (url.pathname.startsWith("/api/") || url.hostname === "api.themoviedb.org") {
     event.respondWith(networkFirst(request, API_CACHE, 5000));
     return;
   }
 
-  // 4. Navigation (HTML pages) — Network-First, fall back to cached app shell
+  // 4. SPA navigation — Network-First; serve offline shell on failure
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("/"))
+      fetch(request).catch(async () => {
+        const cached = await caches.match("/offline.html");
+        return (
+          cached ||
+          new Response("<h1>You are offline</h1>", {
+            headers: { "Content-Type": "text/html" },
+          })
+        );
+      })
     );
     return;
   }
 });
 
-// ─── Strategy Implementations ─────────────────────────────────────────────────
+// ─── Strategy Helpers ─────────────────────────────────────────────────────────
 
-/** Cache-First: serve from cache; fetch & update cache only on miss. */
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   if (cached) return cached;
-
   try {
     const fresh = await fetch(request);
     if (fresh.ok) cache.put(request, fresh.clone());
     return fresh;
-  } catch (err) {
+  } catch {
     return new Response("Offline", { status: 503 });
   }
 }
 
-/** Stale-While-Revalidate: return cache immediately; refresh in background. */
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-
-  // Always kick off a background refresh
   const fetchPromise = fetch(request)
     .then((fresh) => {
       if (fresh.ok) cache.put(request, fresh.clone());
       return fresh;
     })
     .catch(() => null);
-
-  // Return cached immediately if available; otherwise wait for network
   return cached || fetchPromise;
 }
 
-/** Network-First: try network with timeout; fall back to cache on failure. */
-async function networkFirst(request, cacheName, timeoutMs = 4000) {
+async function networkFirst(request, cacheName, timeoutMs) {
   const cache = await caches.open(cacheName);
-
-  const timeoutPromise = new Promise((_, reject) =>
+  const timeout = new Promise((_, reject) =>
     setTimeout(() => reject(new Error("timeout")), timeoutMs)
   );
-
   try {
-    const fresh = await Promise.race([fetch(request), timeoutPromise]);
+    const fresh = await Promise.race([fetch(request), timeout]);
     if (fresh.ok) cache.put(request, fresh.clone());
     return fresh;
   } catch {
     const cached = await cache.match(request);
     if (cached) return cached;
-    return new Response(JSON.stringify({ error: "Offline", cached: false }), {
-      status: 503,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Offline", cached: false }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

@@ -1,26 +1,37 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- ── Primary SEO ─────────────────────────────────── -->
+    <title>Sona Movies — Stream Movies, TV Shows & Live TV</title>
+    <meta name="description" content="Watch movies, TV shows, shorts, live TV, and books — all free, all in one place. Sona Movies is your ultimate entertainment hub." />
+
+    <!-- ── PWA & Theme ─────────────────────────────────── -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- ── Apple PWA (iOS installability) ─────────────── -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sona Movies" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- ── Favicon ─────────────────────────────────────── -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SONA MOVIES</title>
-    
-    <!-- Preconnect to TMDB for blazing fast image and API loading -->
-    <link rel="preconnect" href="https://api.themoviedb.org" crossorigin="anonymous">
-    <link rel="preconnect" href="https://image.tmdb.org" crossorigin="anonymous">
-    <!-- Preload critical assets -->
+
+    <!-- ── Performance: preconnect to external origins ── -->
+    <link rel="preconnect" href="https://api.themoviedb.org" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://image.tmdb.org" crossorigin="anonymous" />
+
+    <!-- ── Performance: preload critical assets ─────────  -->
     <link rel="preload" href="/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/assets/hero.jpg" as="image" />
-    
-    <!-- ========================================== -->
-    <!-- 💰 MONETIZATION: AD NETWORK SCRIPTS HERE   -->
-    <!-- Popunder Ad -->
-    <script type='text/javascript' src='//pl30780667.effectivecpmnetwork.com/4a/4e/e9/4a4ee9ba07ebcdaeda317f4c71839981.js'></script>
-    <!-- Social Bar Ad -->
-    <script type='text/javascript' src='//pl30780668.effectivecpmnetwork.com/e8/03/b7/e803b7ede71376d88627c57bf73b47e2.js'></script>
-    <!-- ========================================== -->
-    
+
+    <!-- ── Monetization ────────────────────────────────── -->
+    <script type="text/javascript" src="//pl30780667.effectivecpmnetwork.com/4a/4e/e9/4a4ee9ba07ebcdaeda317f4c71839981.js"></script>
+    <script type="text/javascript" src="//pl30780668.effectivecpmnetwork.com/e8/03/b7/e803b7ede71376d88627c57bf73b47e2.js"></script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,38 +1,38 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { UserProvider } from './context/UserContext';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import './App.css';
+﻿import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { UserProvider } from "./context/UserContext";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ErrorBoundary from "./components/ErrorBoundary";
+import "./App.css";
 
-// Lazy load pages for performance
-const Home = lazy(() => import('./pages/Home'));
-const Search = lazy(() => import('./pages/Search'));
-const Details = lazy(() => import('./pages/Details'));
-const Watch = lazy(() => import('./pages/Watch'));
-const CategoryPage = lazy(() => import('./pages/CategoryPage'));
-const LiveTV = lazy(() => import('./pages/LiveTV'));
-const BestForYou = lazy(() => import('./pages/BestForYou'));
-const Discover = lazy(() => import('./pages/Discover'));
-const Shorts = lazy(() => import('./pages/Shorts'));
+// Lazy load pages for code splitting
+const Home        = lazy(() => import("./pages/Home"));
+const Search      = lazy(() => import("./pages/Search"));
+const Details     = lazy(() => import("./pages/Details"));
+const Watch       = lazy(() => import("./pages/Watch"));
+const CategoryPage= lazy(() => import("./pages/CategoryPage"));
+const LiveTV      = lazy(() => import("./pages/LiveTV"));
+const BestForYou  = lazy(() => import("./pages/BestForYou"));
+const Discover    = lazy(() => import("./pages/Discover"));
+const Shorts      = lazy(() => import("./pages/Shorts"));
 
-// Library Routes
-const LibraryHome = lazy(() => import('./pages/Library/LibraryHome'));
-const BookDetails = lazy(() => import('./pages/Library/BookDetails'));
-const Reader = lazy(() => import('./pages/Library/Reader'));
-const LibrarySearch = lazy(() => import('./pages/Library/LibrarySearch'));
+// Library routes
+const LibraryHome   = lazy(() => import("./pages/Library/LibraryHome"));
+const BookDetails   = lazy(() => import("./pages/Library/BookDetails"));
+const Reader        = lazy(() => import("./pages/Library/Reader"));
+const LibrarySearch = lazy(() => import("./pages/Library/LibrarySearch"));
 
-// Loading Fallback Component
 const PageLoader = () => (
   <div className="page-loader fade-in">
-    <div className="loader-spinner"></div>
+    <div className="loader-spinner" />
   </div>
 );
 
 const AppContent = () => {
   const location = useLocation();
-  const isShortsRoute = location.pathname === '/shorts';
-  const isReaderRoute = location.pathname.startsWith('/library/read/');
+  const isShortsRoute = location.pathname === "/shorts";
+  const isReaderRoute = location.pathname.startsWith("/library/read/");
   const hideNavigation = isShortsRoute || isReaderRoute;
 
   return (
@@ -41,24 +41,147 @@ const AppContent = () => {
       <main>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/movies" element={<CategoryPage type="movies" />} />
-            <Route path="/tv" element={<CategoryPage type="tv" />} />
-            <Route path="/new-releases" element={<CategoryPage type="new-releases" />} />
-            <Route path="/genre/:id/:name" element={<CategoryPage type="genre" />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/live" element={<LiveTV />} />
-            <Route path="/details/:type/:id" element={<Details />} />
-            <Route path="/watch/:type/:id" element={<Watch />} />
-            <Route path="/best-for-you" element={<BestForYou />} />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/shorts" element={<Shorts />} />
-            
-            {/* Library Ecosystem */}
-            <Route path="/library" element={<LibraryHome />} />
-            <Route path="/library/search" element={<LibrarySearch />} />
-            <Route path="/library/book/:id" element={<BookDetails />} />
-            <Route path="/library/read/:id" element={<Reader />} />
+            {/* Home */}
+            <Route
+              path="/"
+              element={
+                <ErrorBoundary label="Home">
+                  <Home />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Category / Browse pages */}
+            <Route
+              path="/movies"
+              element={
+                <ErrorBoundary label="Movies">
+                  <CategoryPage type="movies" />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/tv"
+              element={
+                <ErrorBoundary label="TV Shows">
+                  <CategoryPage type="tv" />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/new-releases"
+              element={
+                <ErrorBoundary label="New Releases">
+                  <CategoryPage type="new-releases" />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/genre/:id/:name"
+              element={
+                <ErrorBoundary label="Genre">
+                  <CategoryPage type="genre" />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Search & Discover */}
+            <Route
+              path="/search"
+              element={
+                <ErrorBoundary label="Search">
+                  <Search />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/discover"
+              element={
+                <ErrorBoundary label="Discover">
+                  <Discover />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Live TV — isolated boundary so a CDN failure doesn't crash the app */}
+            <Route
+              path="/live"
+              element={
+                <ErrorBoundary label="Live TV">
+                  <LiveTV />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Details & Watch — isolated so a single broken embed doesn't crash everything */}
+            <Route
+              path="/details/:type/:id"
+              element={
+                <ErrorBoundary label="Details">
+                  <Details />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/watch/:type/:id"
+              element={
+                <ErrorBoundary label="Player">
+                  <Watch />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Misc */}
+            <Route
+              path="/best-for-you"
+              element={
+                <ErrorBoundary label="Best For You">
+                  <BestForYou />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/shorts"
+              element={
+                <ErrorBoundary label="Shorts">
+                  <Shorts />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Library */}
+            <Route
+              path="/library"
+              element={
+                <ErrorBoundary label="Library">
+                  <LibraryHome />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/library/search"
+              element={
+                <ErrorBoundary label="Library Search">
+                  <LibrarySearch />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/library/book/:id"
+              element={
+                <ErrorBoundary label="Book Details">
+                  <BookDetails />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/library/read/:id"
+              element={
+                <ErrorBoundary label="Reader">
+                  <Reader />
+                </ErrorBoundary>
+              }
+            />
           </Routes>
         </Suspense>
       </main>

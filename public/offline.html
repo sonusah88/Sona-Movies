@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline — Sona Movies</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg: #09090b;
+        --surface: rgba(255,255,255,0.04);
+        --border: rgba(255,255,255,0.08);
+        --accent: #00e5ff;
+        --accent-glow: rgba(0,229,255,0.25);
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, sans-serif;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        /* Subtle animated gradient background */
+        background-image:
+          radial-gradient(ellipse at 20% 50%, rgba(0,229,255,0.06) 0%, transparent 60%),
+          radial-gradient(ellipse at 80% 20%, rgba(138,43,226,0.06) 0%, transparent 60%);
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        max-width: 480px;
+        width: 100%;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.08);
+      }
+
+      .icon-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0,229,255,0.08);
+        border: 1px solid rgba(0,229,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        animation: pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+        50% { box-shadow: 0 0 0 12px transparent; }
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 2rem;
+        border-radius: 99px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        border: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #8a2be2);
+        color: #000;
+        box-shadow: 0 0 24px var(--accent-glow);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px var(--accent-glow);
+      }
+
+      .btn-secondary {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        margin-top: 0.75rem;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255,255,255,0.08);
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+      }
+
+      .status {
+        margin-top: 2rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255,193,7,0.08);
+        border: 1px solid rgba(255,193,7,0.2);
+        border-radius: 99px;
+        font-size: 0.8rem;
+        color: #ffc107;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon-wrap">📡</div>
+      <h1>You're Offline</h1>
+      <p>
+        It looks like you've lost your internet connection.
+        Check your network settings and try again — your watch history
+        is saved locally and will be right here when you reconnect.
+      </p>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="window.location.reload()">
+          ↻ Try Again
+        </button>
+        <a href="/" class="btn btn-secondary">
+          ← Go to Home
+        </a>
+      </div>
+      <div class="status">⚡ Cached content available</div>
+    </div>
+
+    <script>
+      // Auto-retry when the connection comes back
+      window.addEventListener("online", () => {
+        window.location.reload();
+      });
+    </script>
+  </body>
+</html>
