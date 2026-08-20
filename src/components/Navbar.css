@@ -63,7 +63,7 @@
   color: var(--text-primary);
   font-family: 'Outfit', sans-serif;
   letter-spacing: -0.03em;
-  max-width: 300px;
+  max-width: 250px;
   overflow: hidden;
   opacity: 1;
 }
@@ -80,7 +80,7 @@
 
 
 .brand-logo-img {
-  height: 110px; /* Increased Massive logo */
+  height: 65px;
   width: auto;
   object-fit: contain;
   transition: transform 0.4s var(--ease-spring), filter 0.4s var(--ease-spring), height 0.4s var(--ease-spring);
@@ -103,7 +103,6 @@
   white-space: nowrap;
   min-width: 0;
   flex: 1;
-  justify-content: center;
 }
 
 .navbar.scrolled .navbar-links {
@@ -235,7 +234,7 @@
   color: #ffb400;
   font-weight: 700;
   text-decoration: none;
-  margin-right: 15px;
+  margin-right: 0;
   white-space: nowrap;
   font-size: 0.95rem;
   padding: 0.4rem 0.9rem;
