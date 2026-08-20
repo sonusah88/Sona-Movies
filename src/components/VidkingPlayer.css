@@ -261,8 +261,18 @@
 }
 
 @media (max-width: 768px) {
+  .vidking-wrapper {
+    padding: 0.5rem;
+    border-radius: 16px;
+    gap: 0.75rem;
+  }
+  
   .server-bar {
     gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  .server-label.mobile-hide-text {
+    display: none;
   }
   .server-btn {
     padding: 6px 12px;
@@ -301,6 +311,52 @@
     white-space: nowrap;
     padding-bottom: 0.5rem;
   }
+  
+  .vc-join-group {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+  
+  .vc-or {
+    text-align: center;
+    margin: -0.25rem 0;
+  }
+  
+  .vc-join-form {
+    width: 100%;
+  }
+  
+  .virtual-cinema-input {
+    flex: 1;
+    width: auto !important;
+  }
+  
+  .vpn-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .vpn-banner-content {
+    flex-direction: column;
+    min-width: unset;
+    gap: 0.5rem;
+  }
+  
+  .vpn-banner-actions {
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .vpn-close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
 }
 
 /* -- Virtual Cinema Action Bar -- */
@@ -325,6 +381,23 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.vc-join-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.vc-or {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.vc-join-form {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .virtual-cinema-input {

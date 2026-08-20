@@ -297,7 +297,7 @@ const VidkingPlayer = ({
         
         <div className="virtual-cinema-controls">
           {!roomId ? (
-            <>
+            <div className="vc-join-group">
               <button 
                 className="btn btn-primary"
                 style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', whiteSpace: 'nowrap' }} 
@@ -305,8 +305,8 @@ const VidkingPlayer = ({
               >
                 👥 Create Party
               </button>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>or</span>
-              <form onSubmit={handleJoinRoomSubmit} style={{ display: 'flex', gap: '0.25rem' }}>
+              <span className="vc-or">or</span>
+              <form onSubmit={handleJoinRoomSubmit} className="vc-join-form">
                 <input 
                   type="text" 
                   placeholder="Enter Code..." 
@@ -322,7 +322,7 @@ const VidkingPlayer = ({
                   Join
                 </button>
               </form>
-            </>
+            </div>
           ) : (
             <>
               <button 
@@ -393,16 +393,16 @@ const VidkingPlayer = ({
         </div>
       )}
 
-      {/* Server selector bar */}
+      {/* Server bar */}
       <div className="server-bar glass">
-        <span className="server-label">Switch server if not playing:</span>
-        {SERVERS.map((s, i) => (
+        <span className="server-label mobile-hide-text">Switch server if not playing:</span>
+        {SERVERS.map((srv, idx) => (
           <button
-            key={s.id}
-            className={`server-btn ${i === serverIndex ? "active" : ""}`}
-            onClick={() => handleServerSwitch(i)}
+            key={srv.id}
+            className={`server-btn ${idx === serverIndex ? "active" : ""}`}
+            onClick={() => handleServerSwitch(idx)}
           >
-            {s.name}
+            {srv.name}
           </button>
         ))}
 
